@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#0b1118">
 
-  <!-- Favicons (use the download links below and keep these paths/filenames) -->
+  <!-- Favicons -->
   <link rel="icon" href="./csr-favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="./csr-favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="./csr-favicon-16.png">
@@ -16,7 +16,6 @@
     :root{
       --bg:#0b1118; --panel:#0f1722; --panel2:#0c1522;
       --muted:#9aa4b2; --text:#e8ebf2; --radius:16px;
-      --accent:#2ed573; --accent2:#16a34a;
       --stroke:rgba(255,255,255,.10); --stroke-strong:rgba(255,255,255,.22);
     }
     *{box-sizing:border-box}
@@ -33,7 +32,7 @@
     .muted{color:var(--muted)}
     .caps{text-transform:uppercase;letter-spacing:.18em}
 
-    /* ===== HERO BANNER (thin, no crop; desktop-safe) ===== */
+    /* ===== HERO ===== */
     .hero{max-width:1160px;margin:10px auto 8px;padding:0 16px}
     .hero-box{
       position:relative; overflow:hidden; border-radius:18px;
@@ -43,12 +42,7 @@
         #0b1118;
       box-shadow:inset 0 1px 0 rgba(255,255,255,.10), 0 16px 48px rgba(0,0,0,.32);
     }
-    .hero-box picture, .hero-box img{display:block;width:100%}
-    .hero-box img{
-      height:auto;              /* keep natural aspect ratio on desktop */
-      border-radius:18px;
-      filter:saturate(105%);
-    }
+    .hero-box img{display:block;width:100%;height:auto;border-radius:18px;filter:saturate(105%)}
 
     /* Header / cards / inputs */
     header{
@@ -69,18 +63,18 @@
       width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--stroke);
       background:linear-gradient(180deg,#0e1623,#0b121c);color:var(--text);outline:none
     }
+
+    /* Buttons base */
     .btn{
       cursor:pointer;background:linear-gradient(180deg,#1a2331,#0f1621);
       border:1px solid var(--stroke-strong);
       text-transform:uppercase;letter-spacing:.14em;font-weight:700;font-size:12px
     }
     .btn-ghost{background:linear-gradient(180deg,#101820,#0b1219)}
-    .btn-pulse{
-      background:linear-gradient(180deg,#ffffff,#cfd5db);color:#0a0f14;
-      border-color:rgba(255,255,255,.7);
-      box-shadow:0 0 0 0 rgba(255,255,255,.45);animation:pulse 1.8s infinite
-    }
-    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.45)}70%{box-shadow:0 0 0 14px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+    /* Metallic highlight + pulse */
+    .btn-metal{ background:linear-gradient(180deg,#ffffff,#cfd5db); color:#0a0f14; border-color:rgba(255,255,255,.7); }
+    .btn-pulse{ box-shadow:0 0 0 0 rgba(255,255,255,.45); animation:pulse 1.8s infinite; }
+    @keyframes pulse{ 0%{box-shadow:0 0 0 0 rgba(255,255,255,.45)} 70%{box-shadow:0 0 0 14px rgba(255,255,255,0)} 100%{box-shadow:0 0 0 0 rgba(255,255,255,0)} }
 
     .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:10px}
     .pill{
@@ -96,33 +90,27 @@
     .table-wrap{overflow:auto;max-height:70vh;border:1px solid var(--stroke);border-radius:12px}
     a{color:#cfe4ff;text-decoration:none} a:hover{text-decoration:underline}
     .badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.18);font-size:12px;background:rgba(255,255,255,.10)}
-    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0}
-    .chip{border:1px solid var(--stroke);border-radius:999px;padding:8px 12px;background:linear-gradient(180deg,#0b1624,#0a121c)}
     .tiny{font-size:12px;color:var(--muted)}
-    .kbd{font:600 11px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;padding:2px 6px;border:1px solid var(--stroke);border-radius:6px;background:#0f1722;color:#e8ebf2}
     @media (max-width:1160px){.grid{grid-template-columns:repeat(3,1fr)}}
   </style>
 </head>
 <body>
 
-  <!-- HERO (thin, correct “RESEARCH”, no cropping) -->
+  <!-- HERO -->
   <div class="hero">
     <div class="hero-box">
-      <picture>
-        <img
-          src="./starship-banner-thin-1920x160.png"
-          srcset="./starship-banner-thin-1920x160.png 1920w,
-                  ./starship-banner-thin-1500x140.png 1500w"
-          sizes="(min-width:1200px) 1160px, 100vw"
-          alt="CRYPTO STARSHIP — RESEARCH">
-      </picture>
+      <img src="./starship-banner-thin-1920x160.png"
+           srcset="./starship-banner-thin-1920x160.png 1920w,
+                   ./starship-banner-thin-1500x140.png 1500w"
+           sizes="(min-width:1200px) 1160px, 100vw"
+           alt="CRYPTO STARSHIP — RESEARCH">
     </div>
   </div>
 
   <div class="wrap">
     <header>
       <h1 class="caps">Crypto Starship 🚀 — Solana (4h Windows, 60h cap)</h1>
-      <div class="muted">Click <b>Refresh</b> → toggle 4h pills → Fetch</div>
+      <div class="muted">Click <b>Refresh</b> → toggle 4h pills → <b>Fetch</b></div>
     </header>
 
     <section class="card">
@@ -134,12 +122,9 @@
             </label>
             <input id="token" />
           </div>
-          <div style="width:140px">
-            <label for="limit">Limit / window</label>
-            <input type="number" id="limit" min="1" max="1000" value="100" />
-          </div>
+
           <div class="row" style="gap:8px">
-            <button type="button" id="refreshChart" class="btn btn-pulse">Refresh</button>
+            <button type="button" id="refreshChart" class="btn btn-metal btn-pulse">Refresh</button>
             <button type="button" id="selectAll" class="btn">Select all</button>
             <button type="button" id="clearAll"  class="btn">Clear</button>
           </div>
@@ -151,11 +136,11 @@
         <div class="row" style="margin-top:10px">
           <div style="width:160px">
             <label for="minSol">Min SOL</label>
-            <input type="number" id="minSol" step="0.0000001" placeholder="e.g. 0.1" />
+            <input type="number" id="minSol" step="0.0000001" value="30" placeholder="30" />
           </div>
           <div style="width:160px">
             <label for="maxSol">Max SOL</label>
-            <input type="number" id="maxSol" step="0.0000001" placeholder="e.g. 5" />
+            <input type="number" id="maxSol" step="0.0000001" value="300" placeholder="300" />
           </div>
           <div style="flex:1"></div>
           <div>
@@ -189,14 +174,15 @@
 
   <script>
     /************* constants *************/
-    const REALTIME_HOURS = 60;
+    const REALTIME_HOURS = 60; // 60h cap
     const CANDLE_HOURS = 4;
-    const NUM_CANDLES = REALTIME_HOURS / CANDLE_HOURS;
+    const NUM_CANDLES = REALTIME_HOURS / CANDLE_HOURS; // 15 windows
     const DEFAULT_MINT = "H8xQ6poBjB9DTPMDTKWzWPrnxu4bDEhybxiouF8Ppump";
 
     const $ = s => document.querySelector(s);
     const statusEl=$("#status"), statusTop=$("#statusTop"), tbody=$("#tbody"), candlesWrap=$("#candles");
-    const tokenInput=$("#token"), tokenNameEl=$("#tokenName"), refreshBtn=$("#refreshChart");
+    const tokenInput=$("#token"), tokenNameEl=$("#tokenName"),
+          refreshBtn=$("#refreshChart"), fetchBtn=$("#fetchBtn");
 
     const pad = n => String(n).padStart(2,"0");
     const toLocalISO = d => `${d.getUTCFullYear()}-${pad(d.getUTCMonth()+1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}Z`;
@@ -204,6 +190,17 @@
     const isoCell = ts => { const d=new Date(ts); return isNaN(d)?(ts||""):d.toISOString().replace("T"," ").replace("Z","Z"); };
     const fmt = (n,d=6)=> (n==null||!isFinite(+n))?"":(+n).toLocaleString(undefined,{maximumFractionDigits:d});
 
+    /************* emphasis helpers *************/
+    function setRefreshEmphasis(on){
+      refreshBtn.classList.toggle("btn-metal", !!on);
+      refreshBtn.classList.toggle("btn-pulse", !!on);
+    }
+    function setFetchEmphasis(on){
+      fetchBtn.classList.toggle("btn-metal", !!on);
+      fetchBtn.classList.toggle("btn-pulse", !!on);
+    }
+
+    /************* token name (best-effort) *************/
     async function resolveTokenName(mint){
       try{
         const r = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${mint}`, {mode:"cors"});
@@ -216,6 +213,7 @@
       return mint.slice(0,6)+"…"+mint.slice(-6);
     }
 
+    /************* pills *************/
     let candles = [];
     function buildCandles(){
       const now=new Date(); now.setUTCMinutes(0,0,0);
@@ -247,6 +245,7 @@
       return idxs.map(i=>({ since: toInputISO(candles[i].since), till: toInputISO(candles[i].till) }));
     }
 
+    /************* API *************/
     async function callAPI(body){
       const res=await fetch("./api/trades",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
       if(!res.ok){
@@ -260,6 +259,7 @@
       return res.json();
     }
 
+    /************* table *************/
     function renderTable(rows){
       tbody.innerHTML="";
       const frag=document.createDocumentFragment();
@@ -277,14 +277,11 @@
       tbody.appendChild(frag);
     }
 
-    function setRefreshEmphasis(on){
-      refreshBtn.classList.toggle("btn-pulse", !!on);
-      refreshBtn.classList.toggle("btn", true);
-      refreshBtn.classList.toggle("btn-ghost", !on);
-    }
-    tokenInput.addEventListener("input", ()=>{ setRefreshEmphasis(true); statusTop.textContent=""; });
-
+    /************* Refresh *************/
     async function refreshAll(){
+      // User clicked Refresh → Fetch should highlight, Refresh loses it
+      setRefreshEmphasis(false);
+
       clearPills();
       candles = buildCandles();
       renderCandles();
@@ -295,26 +292,30 @@
       statusTop.textContent="Resolving token…"; statusTop.className="tiny";
       try{
         tokenNameEl.textContent = await resolveTokenName(token);
-        statusTop.textContent="Ready — toggle 4h pills then Fetch."; statusTop.className="tiny ok";
-        setRefreshEmphasis(false);
+        statusTop.textContent="Ready — toggle 4h pills then Fetch.";
+        statusTop.className="tiny ok";
       }catch{
         tokenNameEl.textContent = token.slice(0,6)+"…"+token.slice(-6);
         statusTop.textContent="Ready."; statusTop.className="tiny ok";
-        setRefreshEmphasis(false);
       }
+      // highlight Fetch after refresh completes
+      setFetchEmphasis(true);
     }
 
-    document.querySelector("#fetchBtn").addEventListener("click", async ()=>{
+    // Fetch selected windows
+    $("#fetchBtn").addEventListener("click", async ()=>{
+      // turn off Fetch highlight immediately on click
+      setFetchEmphasis(false);
+
       const token=tokenInput.value.trim();
-      const limitPerWindow=parseInt(document.querySelector("#limit").value||"100",10);
-      const minSol=parseFloat(document.querySelector("#minSol").value), maxSol=parseFloat(document.querySelector("#maxSol").value);
+      const minSol=parseFloat($("#minSol").value), maxSol=parseFloat($("#maxSol").value);
       const windows=selectedWindows();
       if(!token){ statusEl.textContent="Enter a token address."; statusEl.className="status err"; return; }
       if(windows.length===0){ statusEl.textContent="Select at least one 4h window (toggle pills)."; statusEl.className="status err"; return; }
 
       statusEl.textContent="Loading…"; statusEl.className="status";
       try{
-        const { rows } = await callAPI({ token, windows, limitPerWindow });
+        const { rows } = await callAPI({ token, windows });
         const filtered = rows.filter(r=>{
           const s=+r.solAmount; if(!isFinite(s)) return true;
           if(!Number.isNaN(minSol) && s<minSol) return false;
@@ -329,13 +330,30 @@
       }
     });
 
-    document.querySelector("#refreshChart").onclick = ()=> refreshAll();
-    document.querySelector("#selectAll").onclick = ()=> allPills();
-    document.querySelector("#clearAll").onclick  = ()=> clearPills();
+    // Buttons
+    $("#refreshChart").onclick = ()=> refreshAll();
+    $("#selectAll").onclick = ()=> allPills();
+    $("#clearAll").onclick  = ()=> clearPills();
 
-    document.querySelector("#token").value = DEFAULT_MINT;
-    (async()=>{ document.querySelector("#tokenName").textContent = await resolveTokenName(DEFAULT_MINT); })();
-    candles = buildCandles(); renderCandles();
+    // Initial UI defaults
+    $("#token").value = DEFAULT_MINT;
+    (async()=>{ $("#tokenName").textContent = await resolveTokenName(DEFAULT_MINT); })();
+
+    // Initial emphasis: highlight Refresh, keep Fetch neutral
+    setRefreshEmphasis(true);
+    setFetchEmphasis(false);
+
+    // Typing a new token → Refresh highlights again; Fetch neutral
+    tokenInput.addEventListener("input", ()=>{
+      setRefreshEmphasis(true);
+      setFetchEmphasis(false);
+      statusTop.textContent="";
+    });
+
+    candles = buildCandles();
+    renderCandles();
   </script>
 </body>
 </html>
+
+
