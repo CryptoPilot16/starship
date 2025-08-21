@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title> STARSHIP RESEARCH 🚀</title>
+  <title>STARSHIP RESEARCH 🚀</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#0b1118">
 
-  <!-- Favicons (put these files next to this HTML) -->
-  <link rel="icon" href="./favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+  <!-- Favicons (use the download links below and keep these paths/filenames) -->
+  <link rel="icon" href="./csr-favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="./csr-favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./csr-favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./csr-apple-touch-180.png">
 
   <style>
     :root{
@@ -33,7 +33,7 @@
     .muted{color:var(--muted)}
     .caps{text-transform:uppercase;letter-spacing:.18em}
 
-    /* ===== HERO BANNER (fit & left-biased crop) ===== */
+    /* ===== HERO BANNER (thin, no crop; desktop-safe) ===== */
     .hero{max-width:1160px;margin:10px auto 8px;padding:0 16px}
     .hero-box{
       position:relative; overflow:hidden; border-radius:18px;
@@ -45,14 +45,10 @@
     }
     .hero-box picture, .hero-box img{display:block;width:100%}
     .hero-box img{
-      height:110px;                 /* thin strip matches layout */
-      object-fit:cover;
-      object-position:left center;  /* keep emblem + title visible */
+      height:auto;              /* keep natural aspect ratio on desktop */
+      border-radius:18px;
       filter:saturate(105%);
     }
-    @media (min-width:1280px){ .hero-box img{height:120px} }
-    @media (max-width:900px){ .hero-box img{height:96px} }
-    @media (max-width:520px){ .hero-box img{height:82px} }
 
     /* Header / cards / inputs */
     header{
@@ -109,22 +105,14 @@
 </head>
 <body>
 
-  <!-- HERO (left-biased crop so emblem + title always show) -->
+  <!-- HERO (thin, correct “RESEARCH”, no cropping) -->
   <div class="hero">
     <div class="hero-box">
       <picture>
-        <source type="image/webp"
-                srcset="./banner-4k-3840x640.webp 3840w,
-                        ./banner-2560x420.webp    2560w,
-                        ./banner-1920x320.webp    1920w,
-                        ./banner-1500x280.webp    1500w"
-                sizes="(min-width:1200px) 1160px, 100vw">
         <img
-          src="./banner-1920x320.png"
-          srcset="./banner-4k-3840x640.png 3840w,
-                  ./banner-2560x420.png    2560w,
-                  ./banner-1920x320.png    1920w,
-                  ./banner-1500x280.png    1500w"
+          src="./starship-banner-thin-1920x160.png"
+          srcset="./starship-banner-thin-1920x160.png 1920w,
+                  ./starship-banner-thin-1500x140.png 1500w"
           sizes="(min-width:1200px) 1160px, 100vw"
           alt="CRYPTO STARSHIP — RESEARCH">
       </picture>
@@ -133,7 +121,7 @@
 
   <div class="wrap">
     <header>
-      <h1 class="caps">Crypto Starship 🚀 — Solana (Realtime • 4h Windows, 60h cap)</h1>
+      <h1 class="caps">Crypto Starship 🚀 — Solana (4h Windows, 60h cap)</h1>
       <div class="muted">Click <b>Refresh</b> → toggle 4h pills → Fetch</div>
     </header>
 
@@ -351,4 +339,3 @@
   </script>
 </body>
 </html>
-
