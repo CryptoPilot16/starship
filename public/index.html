@@ -28,54 +28,123 @@
         radial-gradient(900px 420px at 50% 0%, rgba(255,255,255,.05), transparent 60%),
         var(--bg);
     }
-    .wrap{max-width:1160px;margin:18px auto 28px;padding:0 16px}
+
+    /* ===== LAYOUT ===== */
+    .app{
+      display:grid;
+      grid-template-columns: 240px 1fr;
+      gap:16px;
+      width:100%;
+      margin:0;
+      padding:0 16px 28px 0; /* sidebar flush-left */
+    }
+    .sidebar{
+      position:sticky; top:0; height:100vh;
+      display:flex;flex-direction:column;gap:12px;
+      border:1px solid var(--stroke-strong); border-radius:0;
+      background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.02));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 16px 48px rgba(0,0,0,.30);
+      padding:12px;
+    }
+
+    /* Sidebar brand — metallic style to match the logo look */
+    .brand{
+      text-transform:uppercase;
+      letter-spacing:.24em;
+      text-align:center;
+      border:1px solid var(--stroke);
+      border-radius:12px;
+      padding:12px 10px;
+      background:
+        radial-gradient(120% 180% at 50% -40%, rgba(255,255,255,.10), transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    }
+    .brand span{
+      display:block;
+      font-weight:900;
+      line-height:1.15;
+      /* metallic fill */
+      background:linear-gradient(180deg,#ffffff 0%, #e9eef4 40%, #ced6de 55%, #f4f7fa 70%, #bfc7cf 100%);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      /* subtle bevel / glow */
+      text-shadow:
+        0 1px 0 rgba(255,255,255,.35),
+        0 2px 6px rgba(0,0,0,.55);
+      /* sizing */
+      font-size:13.5px;
+    }
+    .brand .small{ font-size:11.5px; letter-spacing:.30em; opacity:.95; margin-top:4px; }
+
+    .nav-group{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+    .nav-btn{
+      display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--stroke);
+      background:linear-gradient(180deg,#101a27,#0b131e); cursor:pointer; user-select:none;
+      font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+    }
+    .nav-btn[data-active="true"]{
+      border-color:#dfe3e8; background:linear-gradient(180deg,#1c2a3a,#0c1725);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
+    }
+
+    /* Metallic menu icons */
+    .icon-metal{
+      font-size:16px; line-height:1;
+      background:linear-gradient(180deg,#ffffff,#cfd5db);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      display:inline-block; width:1.2em; text-align:center;
+    }
+
+    .main{min-width:0; padding-left:0; padding-right:16px;}
     .muted{color:var(--muted)}
     .caps{text-transform:uppercase;letter-spacing:.18em}
-
-    /* ===== HERO ===== */
-    .hero{max-width:1160px;margin:10px auto 8px;padding:0 16px}
-    .hero-box{
-      position:relative; overflow:hidden; border-radius:18px;
-      border:1px solid var(--stroke-strong);
-      background:
-        radial-gradient(900px 360px at 50% -10%, rgba(255,255,255,.05), transparent 60%),
-        #0b1118;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.10), 0 16px 48px rgba(0,0,0,.32);
-    }
-    .hero-box img{display:block;width:100%;height:auto;border-radius:18px;filter:saturate(105%)}
-
-    /* Header / cards / inputs */
-    header{
-      display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
-      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));
-      border:1px solid var(--stroke); border-radius:18px; padding:10px 14px;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 10px 35px rgba(0,0,0,.25);
-      gap:10px;
-    }
-    h1{margin:0;font-size:18px;letter-spacing:.22em;text-transform:uppercase}
+    .panel{display:none}
+    .panel[data-active="true"]{display:block}
 
     .card{
       background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.02));
       border:1px solid var(--stroke); border-radius:var(--radius); padding:14px;
       box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 20px 60px rgba(0,0,0,.30);
     }
+
+    /* Research header bar */
+    .research-head{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:8px 12px; margin:0 0 10px 0;
+      border:1px solid var(--stroke); border-radius:12px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    .research-title{
+      margin:0;
+      font-size:18px; /* slightly bigger */
+      letter-spacing:.22em; text-transform:uppercase; font-weight:800;
+    }
+    .research-instr{ font-size:13px; color:var(--muted); text-align:right; }
+
     label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
     input,button{
       width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--stroke);
       background:linear-gradient(180deg,#0e1623,#0b121c);color:var(--text);outline:none
     }
 
-    /* Buttons base */
+    /* Buttons (also styles <a> as button) */
     .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:6px;
       cursor:pointer;background:linear-gradient(180deg,#1a2331,#0f1621);
       border:1px solid var(--stroke-strong);
-      text-transform:uppercase;letter-spacing:.14em;font-weight:700;font-size:12px
+      text-transform:uppercase;letter-spacing:.14em;font-weight:700;font-size:12px;
+      padding:10px 12px;
     }
-    .btn-ghost{background:linear-gradient(180deg,#101820,#0b1219)}
-    /* Metallic highlight + pulse */
     .btn-metal{ background:linear-gradient(180deg,#ffffff,#cfd5db); color:#0a0f14; border-color:rgba(255,255,255,.7); }
     .btn-pulse{ box-shadow:0 0 0 0 rgba(255,255,255,.45); animation:pulse 1.8s infinite; }
     @keyframes pulse{ 0%{box-shadow:0 0 0 0 rgba(255,255,255,.45)} 70%{box-shadow:0 0 0 14px rgba(255,255,255,0)} 100%{box-shadow:0 0 0 0 rgba(255,255,255,0)} }
+
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .token-col{flex:1;min-width:0}
+    .controls-col{display:flex;flex-direction:column;gap:10px}
+    .two-inputs{display:flex;gap:10px;margin-top:10px}
+    .input-w{width:160px}
+    .wide{min-width:220px;flex:1}
 
     .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:10px}
     .pill{
@@ -83,154 +152,233 @@
       background:linear-gradient(180deg,#101a27,#0b131e); box-shadow:inset 0 1px 0 rgba(255,255,255,.05)
     }
     .pill[data-active="true"]{background:linear-gradient(180deg,#1c2a3a,#0c1725);border-color:#dfe3e8;box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
-    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-
-    /* Helpers for responsive inputs */
-    .token-col{flex:1;min-width:0}
-    .controls-col{display:flex;flex-direction:column;gap:10px}
-    .two-inputs{display:flex;gap:10px;margin-top:10px}
-    .input-w{width:160px}
-    .wide{min-width:220px;flex:1}
 
     .status{min-height:20px;margin-top:8px}.ok{color:#22c55e}.err{color:#ff6b6b}
     table{width:100%;border-collapse:collapse;margin-top:12px}
     th,td{padding:10px 8px;border-bottom:1px dashed rgba(255,255,255,.06);text-align:left;vertical-align:top}
     th{font-size:12px;color:var(--muted)}
-    .table-wrap{overflow:auto;max-height:70vh;border:1px solid var(--stroke);border-radius:12px}
+    .table-wrap{overflow-y:auto; overflow-x:hidden; max-height:70vh;border:1px solid var(--stroke);border-radius:12px}
     a{color:#cfe4ff;text-decoration:none} a:hover{text-decoration:underline}
+    .wallet-link{word-break:break-all}
+
     .badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.18);font-size:12px;background:rgba(255,255,255,.10)}
     .tiny{font-size:12px;color:var(--muted)}
+    .kbd{font:600 11px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;padding:2px 6px;border:1px solid var(--stroke);border-radius:6px;background:#0f1722;color:#e8ebf2}
+
+    /* Metallic star buttons */
+    .star-btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:6px;
+      padding:6px 10px;border-radius:10px;border:1px solid var(--stroke-strong);
+      background:linear-gradient(180deg,#1a2331,#0f1621);
+      font-weight:700;letter-spacing:.06em;cursor:pointer;user-select:none
+    }
+    .star-btn[data-active="true"]{
+      background:linear-gradient(180deg,#ffffff,#cfd5db); color:#0a0f14; border-color:rgba(255,255,255,.75);
+    }
+    .star-icn{
+      font-size:14px; line-height:1;
+      background:linear-gradient(180deg,#ffffff,#cfd5db);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+    }
+    .star-btn[data-active="true"] .star-icn{ background:none; color:#0a0f14; }
+
+    /* Wallet list compact (no h-scroll) */
+    .wallets-table{ table-layout:fixed; width:100%; }
+    .wallets-table th, .wallets-table td{ padding:6px 6px; font-size:12px; }
+    .wallets-table .col-wallet{ width:auto; padding-right:4px; }
+    .wallets-table .col-ticker{ width:78px; }
+    .wallets-table .col-actions{ width:86px; text-align:right; white-space:nowrap; }
+    .wallets-table a.wallet-link{ display:inline-block; width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+    .btn-xxxs{ font-size:9px; padding:2px 5px; letter-spacing:.05em; }
+    .star-btn-xxxs{ font-size:9px; padding:2px 5px; border-radius:6px; }
 
     /* ======= RESPONSIVE ======= */
-    @media (max-width:1160px){ .grid{grid-template-columns:repeat(3,1fr)} }
-    @media (max-width:720px){
-      .wrap{margin:12px auto 18px;padding:0 10px}
-      header{flex-direction:column;align-items:stretch;text-align:center}
-      h1{font-size:16px;letter-spacing:.20em}
-      .hero{padding:0 10px}
-      .hero-box img{border-radius:14px}
-      .controls-col .btn{width:100%}
-      .grid{grid-template-columns:repeat(2,1fr)}
-      .two-inputs{flex-direction:column}
-      .input-w,.wide{width:100%}
-    }
-    @media (max-width:420px){
-      .grid{grid-template-columns:1fr}
+    @media (max-width:980px){
+      .app{grid-template-columns: 1fr; padding:0 12px 20px;}
+      .sidebar{position:static;height:auto;border-radius:16px}
+      .main{padding:0}
+      .grid{grid-template-columns:repeat(3,1fr)}
+      .wallets-table .col-actions{ width:80px; }
+      .wallets-table .col-ticker{ width:72px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-box">
-      <img src="./starship-banner-thin-1920x160.png"
-           srcset="./starship-banner-thin-1920x160.png 1920w,
-                   ./starship-banner-thin-1500x140.png 1500w"
-           sizes="(min-width:1200px) 1160px, 100vw"
-           alt="CRYPTO STARSHIP — RESEARCH">
-    </div>
-  </div>
-
-  <div class="wrap">
-    <header>
-      <h1 class="caps">Solana Buyers By Size (Last 60h)</h1>
-      <div class="muted">Select Token → Click <b>Refresh</b> → Select Timeframe and Size → Click <b>Fetch</b></div>
-    </header>
-
-    <section class="card">
-      <form id="query-form" onsubmit="return false;">
-        <!-- Token + controls (responsive) -->
-        <div class="row">
-          <div class="token-col">
-            <label for="token">Token Address
-              <span class="tiny">• Name: <b id="tokenName">—</b></span>
-            </label>
-            <input id="token" />
-          </div>
-
-          <div class="controls-col">
-            <button type="button" id="refreshChart" class="btn btn-metal btn-pulse">Refresh</button>
-            <button type="button" id="selectAll" class="btn">Select all</button>
-            <button type="button" id="clearAll"  class="btn">Clear</button>
-          </div>
-        </div>
-
-        <div class="muted" style="margin-top:10px">4h windows (newest first): click pills to toggle selection.</div>
-        <div id="candles" class="grid"></div>
-
-        <!-- Custom timeframe (UTC, within last 48h) -->
-        <div class="row" style="margin-top:12px;align-items:flex-end">
-          <div class="wide">
-            <label for="customSince">Custom range (UTC, ≤48h) — Since</label>
-            <input type="datetime-local" id="customSince" step="60" />
-          </div>
-          <div class="wide">
-            <label for="customTill">Till</label>
-            <input type="datetime-local" id="customTill" step="60" />
-          </div>
-          <div class="tiny muted" id="customBounds" style="padding-bottom:8px;flex:1"></div>
-        </div>
-
-        <div class="two-inputs">
-          <div class="input-w">
-            <label for="minSol">Min SOL</label>
-            <input type="number" id="minSol" step="0.0000001" value="30" placeholder="30" />
-          </div>
-          <div class="input-w">
-            <label for="maxSol">Max SOL</label>
-            <input type="number" id="maxSol" step="0.0000001" value="300" placeholder="300" />
-          </div>
-        </div>
-
-        <div class="row" style="margin-top:10px;justify-content:flex-end">
-          <div style="width:180px;max-width:100%">
-            <button type="submit" id="fetchBtn" class="btn" style="width:100%">Fetch</button>
-          </div>
-        </div>
-
-        <div id="statusTop" class="tiny">—</div>
-        <div id="status" class="status"></div>
-      </form>
-    </section>
-
-    <section class="card" style="margin-top:12px">
-      <div class="table-wrap">
-        <table id="results">
-          <thead>
-            <tr>
-              <th>Time (UTC)</th>
-              <th>Wallet</th>
-              <th>SOL Amount</th>
-              <th>Tx</th>
-              <th>Dataset</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
+  <div class="app">
+    <!-- ===== Sidebar ===== -->
+    <aside class="sidebar">
+      <div class="brand">
+        <span>STARSHIP RESEARCH</span>
       </div>
-    </section>
+
+      <div class="nav-group">
+        <button class="nav-btn" data-view="research" data-active="true">
+          <span class="icon-metal" aria-hidden="true">🔎</span> Research
+        </button>
+        <button class="nav-btn" data-view="wallets">
+          <span class="icon-metal" aria-hidden="true">💰</span> Wallets
+        </button>
+      </div>
+    </aside>
+
+    <!-- ===== Main ===== -->
+    <main class="main">
+      <!-- ===== Research ===== -->
+      <section id="view-research" class="panel" data-active="true">
+        <div class="card">
+          <!-- Bigger title left, instructions right -->
+          <div class="research-head">
+            <h3 class="research-title">SOLANA BUYERS BY SIZE (LAST 60 HOURS)</h3>
+            <div class="research-instr">Choose Token → Click <b>Refresh</b> → Choose Time and Sizer → <b>Click Fetch</b></div>
+          </div>
+
+          <form id="query-form" onsubmit="return false;">
+            <div class="row">
+              <div class="token-col">
+                <label for="token">Token Address
+                  <span class="tiny">• Name: <b id="tokenName">—</b></span>
+                </label>
+                <input id="token" />
+              </div>
+              <div class="controls-col">
+                <button type="button" id="refreshChart" class="btn btn-metal btn-pulse">Refresh</button>
+                <button type="button" id="selectAll" class="btn">Select all</button>
+                <button type="button" id="clearAll"  class="btn">Clear</button>
+              </div>
+            </div>
+
+            <div class="muted" style="margin-top:10px">4h windows (newest first): click pills to toggle selection.</div>
+            <div id="candles" class="grid"></div>
+
+            <div class="row" style="margin-top:12px;align-items:flex-end">
+              <div class="wide">
+                <label for="customSince">Custom range (UTC, ≤48h) — Since</label>
+                <input type="datetime-local" id="customSince" step="60" />
+              </div>
+              <div class="wide">
+                <label for="customTill">Till</label>
+                <input type="datetime-local" id="customTill" step="60" />
+              </div>
+              <div class="tiny muted" id="customBounds" style="padding-bottom:8px;flex:1"></div>
+            </div>
+
+            <div class="two-inputs">
+              <div class="input-w">
+                <label for="minSol">Min SOL</label>
+                <input type="number" id="minSol" step="0.0000001" value="30" placeholder="30" />
+              </div>
+              <div class="input-w">
+                <label for="maxSol">Max SOL</label>
+                <input type="number" id="maxSol" step="0.0000001" value="300" placeholder="300" />
+              </div>
+            </div>
+
+            <div class="row" style="margin-top:10px;justify-content:flex-end">
+              <div style="width:180px;max-width:100%">
+                <button type="submit" id="fetchBtn" class="btn" style="width:100%">Fetch</button>
+              </div>
+            </div>
+
+            <div id="statusTop" class="tiny">—</div>
+            <div id="status" class="status"></div>
+          </form>
+
+          <!-- Fetched results -->
+          <div class="table-wrap">
+            <table id="results">
+              <thead>
+                <tr>
+                  <th>Time (UTC)</th>
+                  <th>Wallet</th>
+                  <th>SOL Amount</th>
+                  <th>Tx</th>
+                  <th>Dataset</th>
+                  <th>Save</th>
+                </tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Wallets ===== -->
+      <section id="view-wallets" class="panel">
+        <div class="card">
+          <div class="table-wrap">
+            <table class="wallets-table">
+              <thead>
+                <tr>
+                  <th class="col-wallet">Wallet</th>
+                  <th class="col-ticker">Ticker</th>
+                  <th class="col-actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="savedWalletsTbody"></tbody>
+            </table>
+          </div>
+
+          <!-- Manual add -->
+          <div class="row" style="gap:10px;align-items:flex-end;margin:10px 0">
+            <div class="wide">
+              <label for="manualAddr">Add wallet address</label>
+              <input id="manualAddr" placeholder="Enter wallet address (Base58)" />
+            </div>
+            <div class="wide">
+              <label for="manualNote">Ticker (optional, e.g. $SOL)</label>
+              <input id="manualNote" placeholder="$TICKER" />
+            </div>
+            <div style="width:160px">
+              <label>&nbsp;</label>
+              <button type="button" id="addSaved" class="btn" style="width:100%">Add</button>
+            </div>
+          </div>
+          <div id="savedStatus" class="tiny muted" style="min-height:18px;margin-bottom:6px"></div>
+
+          <div class="row" style="justify-content:flex-end; gap:8px;">
+            <button type="button" class="btn" id="copySaved">Copy</button>
+            <button type="button" class="btn" id="clearSaved">Clear</button>
+          </div>
+        </div>
+      </section>
+    </main>
   </div>
 
   <script>
     /************* constants *************/
-    const REALTIME_HOURS = 60;             // pills cover 60h
-    const CUSTOM_RANGE_MAX_HOURS = 48;     // custom range is limited to last 48h
+    const REALTIME_HOURS = 60;
+    const CUSTOM_RANGE_MAX_HOURS = 48;
     const CANDLE_HOURS = 4;
-    const NUM_CANDLES = REALTIME_HOURS / CANDLE_HOURS; // 15 windows
+    const NUM_CANDLES = REALTIME_HOURS / CANDLE_HOURS; // 15
     const DEFAULT_MINT = "H8xQ6poBjB9DTPMDTKWzWPrnxu4bDEhybxiouF8Ppump";
 
     const $ = s => document.querySelector(s);
+
+    // Elements
     const statusEl=$("#status"), statusTop=$("#statusTop"), tbody=$("#tbody"), candlesWrap=$("#candles");
     const tokenInput=$("#token"), tokenNameEl=$("#tokenName"),
           refreshBtn=$("#refreshChart"), fetchBtn=$("#fetchBtn");
     const customSince=$("#customSince"), customTill=$("#customTill"), customBounds=$("#customBounds");
+    const manualAddr=$("#manualAddr"), manualNote=$("#manualNote");
+    const savedStatus=$("#savedStatus");
+    const savedWalletsTbody = $("#savedWalletsTbody");
 
     const pad = n => String(n).padStart(2,"0");
     const toLocalISO = d => `${d.getUTCFullYear()}-${pad(d.getUTCMonth()+1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}Z`;
     const toInputISO = d => { const x=new Date(d); x.setUTCSeconds(0,0); return x.toISOString().replace(".000",""); };
     const isoCell = ts => { const d=new Date(ts); return isNaN(d)?(ts||""):d.toISOString().replace("T"," ").replace("Z","Z"); };
     const fmt = (n,d=6)=> (n==null||!isFinite(+n))?"":(+n).toLocaleString(undefined,{maximumFractionDigits:d});
+
+    /************* left menu router *************/
+    document.querySelectorAll('.nav-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const view = btn.dataset.view;
+        document.querySelectorAll('.nav-btn').forEach(b=>b.dataset.active = (b===btn) ? 'true' : 'false');
+        document.querySelectorAll('.panel').forEach(p=>p.dataset.active = (p.id === 'view-'+view) ? 'true' : 'false');
+      });
+    });
 
     /************* emphasis helpers *************/
     function setRefreshEmphasis(on){
@@ -252,18 +400,167 @@
       customBounds.textContent = `Allowed: ${toLocalISO(min)} → ${toLocalISO(now)} (UTC)`;
     }
 
-    /************* token name (best-effort) *************/
-    async function resolveTokenName(mint){
+    /************* token meta (name + symbol) *************/
+    let tokenMeta = { label: "—", symbol: "" };
+    function setTokenLabel(label){ tokenMeta.label = label || "—"; tokenNameEl.textContent = tokenMeta.label; }
+    function setTokenSymbol(sym){ tokenMeta.symbol = (sym||"").trim().toUpperCase(); }
+
+    async function resolveTokenMeta(mint){
+      let name=null, symbol=null;
       try{
         const r = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${mint}`, {mode:"cors"});
-        if(r.ok){ const j=await r.json(); const pair=j?.pairs?.[0]; const base=pair?.baseToken; if(base?.name||base?.symbol) return base.name || base.symbol; }
+        if(r.ok){
+          const j=await r.json();
+          const base=j?.pairs?.[0]?.baseToken;
+          if(base){ name = base.name || name; symbol = base.symbol || symbol; }
+        }
       }catch{}
       try{
-        const r2 = await fetch(`https://public-api.solscan.io/token/meta?tokenAddress=${mint}`, {mode:"cors"});
-        if(r2.ok){ const j=await r2.json(); if(j?.name||j?.symbol) return j.name || j.symbol; }
+        if(!symbol || !name){
+          const r2 = await fetch(`https://public-api.solscan.io/token/meta?tokenAddress=${mint}`, {mode:"cors"});
+          if(r2.ok){
+            const j=await r2.json();
+            name = name || j?.name || j?.symbol;
+            symbol = symbol || j?.symbol;
+          }
+        }
       }catch{}
-      return mint.slice(0,6)+"…"+mint.slice(-6);
+      if(!name){ name = mint.slice(0,6)+"…"+mint.slice(-6); }
+      setTokenLabel(name);
+      if(symbol) setTokenSymbol(symbol);
     }
+
+    /************* wallet storage (localStorage) *************/
+    const STORAGE_KEY = 'csr_saved_wallets_v2';
+
+    function storageOK(){
+      try{
+        const t='__test__'+Math.random();
+        localStorage.setItem(t,'1'); localStorage.removeItem(t);
+        return true;
+      }catch(e){
+        console.warn('localStorage unavailable:', e);
+        statusTop.textContent = 'Warning: localStorage blocked — cannot save wallets.';
+        statusTop.className = 'tiny err';
+        return false;
+      }
+    }
+
+    function getSaved(){
+      if(!storageOK()) return {};
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+      catch { return {}; }
+    }
+    function setSaved(obj){
+      if(!storageOK()) return;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+      renderSavedTable();     // update Wallets page
+      updateStarIndicators(); // and Research star buttons
+    }
+
+    function updateStarIndicators(){
+      const map = getSaved();
+      document.querySelectorAll('#tbody .star-btn').forEach(b=>{
+        const w=b.dataset.wallet;
+        b.dataset.active = map[w] ? 'true' : 'false';
+      });
+    }
+
+    // Save/unsave a wallet; store ONLY ticker (e.g. "$SOL") if available
+    function toggleSave(address){
+      if(!address) return;
+      const saved = getSaved();
+      if(saved[address]){
+        delete saved[address];
+      }else{
+        const ticker = tokenMeta.symbol ? `$${tokenMeta.symbol}` : (manualNote?.value?.trim() || "—");
+        saved[address] = { created: new Date().toISOString(), ticker };
+      }
+      setSaved(saved);
+    }
+
+    // Manual add (Wallets panel)
+    function addManualWallet(addr, noteInput){
+      const address = (addr||"").trim();
+      if(!address){ setSavedStatus("Enter a wallet address.", true); return; }
+      const saved = getSaved();
+      const ticker = (noteInput||"").trim() || (tokenMeta.symbol ? `$${tokenMeta.symbol}` : "—");
+      saved[address] = { created: new Date().toISOString(), ticker };
+      setSaved(saved);
+      setSavedStatus("Wallet added.");
+      if(manualAddr) manualAddr.value = "";
+      if(manualNote) manualNote.value = "";
+    }
+    function setSavedStatus(msg, warn=false){
+      if(!savedStatus) return;
+      savedStatus.textContent = msg || "";
+      savedStatus.className = "tiny " + (warn ? "err" : "ok");
+    }
+
+    // Render saved table (Wallets page only)
+    function renderSavedTable(){
+      const map = getSaved();
+      const rows = Object.entries(map).sort((a,b)=>a[0].localeCompare(b[0])); // [address, obj]
+      const tbodySaved = savedWalletsTbody;
+      if(!tbodySaved) return;
+      tbodySaved.innerHTML="";
+
+      if(rows.length===0){
+        const tr=document.createElement('tr');
+        tr.innerHTML = `<td colspan="3" class="tiny muted">No wallets saved yet.</td>`;
+        tbodySaved.appendChild(tr);
+        return;
+      }
+
+      rows.forEach(([addr, info])=>{
+        const ticker = info?.ticker || "—";
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="col-wallet"><a class="wallet-link" href="https://solscan.io/account/${addr}" target="_blank" rel="noopener">${addr}</a></td>
+          <td class="col-ticker">${ticker}</td>
+          <td class="col-actions">
+            <button type="button" class="star-btn star-btn-xxxs" data-wallet="${addr}" data-active="true" title="Unsave">
+              <span class="star-icn">★</span>
+            </button>
+            <button type="button" class="btn btn-xxxs" data-edit-note="${addr}" title="Edit ticker" style="margin-left:6px">✎</button>
+          </td>
+        `;
+        tbodySaved.appendChild(tr);
+      });
+    }
+
+    // Global click handlers (works for Research table & Wallets table)
+    document.addEventListener('click', (e)=>{
+      const star = e.target.closest('.star-btn');
+      const edit = e.target.closest('[data-edit-note]');
+      if(star && star.dataset.wallet){
+        toggleSave(star.dataset.wallet);
+        return;
+      }
+      if(edit){
+        const addr = edit.dataset.editNote;
+        const saved = getSaved();
+        const current = saved[addr]?.ticker || "—";
+        const next = prompt('Edit ticker (e.g. $SOL, $WIF):', current);
+        if(next!=null){
+          saved[addr]={...(saved[addr]||{}), ticker: next.trim()||"—"};
+          setSaved(saved);
+          setSavedStatus("Ticker updated.");
+        }
+      }
+    });
+
+    // Copy / Clear (Wallets view)
+    $("#copySaved")?.addEventListener('click', ()=>{
+      const s=getSaved(); const list=Object.keys(s).join('\n');
+      navigator.clipboard.writeText(list).then(()=> setSavedStatus('Copied saved wallets to clipboard.'));
+    });
+    $("#clearSaved")?.addEventListener('click', ()=>{
+      if(confirm('Clear all saved wallets?')) { setSaved({}); setSavedStatus("Cleared all saved wallets."); }
+    });
+    $("#addSaved")?.addEventListener('click', ()=> addManualWallet(manualAddr.value, manualNote.value));
+    manualAddr?.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); addManualWallet(manualAddr.value, manualNote.value); }});
+    manualNote?.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); addManualWallet(manualAddr.value, manualNote.value); }});
 
     /************* pills *************/
     let candles = [];
@@ -297,21 +594,15 @@
       const idxs=[...candlesWrap.querySelectorAll(".pill[data-active='true']")].map(n=>+n.dataset.idx).sort((x,y)=>x-y);
       const out = idxs.map(i=>({ since: toInputISO(candles[i].since), till: toInputISO(candles[i].till) }));
 
-      // Optional custom range (validate & clamp to 48h window)
-      const cs = customSince.value;
-      const ct = customTill.value;
+      // Optional custom range
+      const cs = customSince.value, ct = customTill.value;
       if(cs && ct){
-        const s = new Date(cs);
-        const t = new Date(ct);
+        const s = new Date(cs), t = new Date(ct);
         if(!isNaN(s) && !isNaN(t) && s < t){
           const now = new Date();
           const min = new Date(now.getTime() - CUSTOM_RANGE_MAX_HOURS*3600*1000);
-          if(s >= min && t <= now){
-            out.push({ since: toInputISO(s), till: toInputISO(t) });
-          }else{
-            statusTop.textContent = "Custom range must be within the last 48h (UTC).";
-            statusTop.className = "tiny err";
-          }
+          if(s >= min && t <= now){ out.push({ since: toInputISO(s), till: toInputISO(t) }); }
+          else { statusTop.textContent = "Custom range must be within the last 48h (UTC)."; statusTop.className = "tiny err"; }
         }
       }
       return out;
@@ -319,7 +610,7 @@
 
     /************* API *************/
     async function callAPI(body){
-      const res=await fetch("./api/trades",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+      const res=await fetch("./api/trades",{method:"POST",headers:{ "Content-Type":"application/json"},body:JSON.stringify(body)});
       if(!res.ok){
         let msg=res.statusText;
         try{
@@ -331,53 +622,62 @@
       return res.json();
     }
 
-    /************* table *************/
+    /************* table (fetched) *************/
     function renderTable(rows){
       tbody.innerHTML="";
+      const savedMap = getSaved();
       const frag=document.createDocumentFragment();
+
       rows.forEach(r=>{
         const sig=r.signature||"", link=sig?`https://solscan.io/tx/${sig}`:"";
+        const addr = (r.wallet || "").trim();
+
         const tr=document.createElement("tr");
         tr.innerHTML=`
           <td>${isoCell(r.time)}</td>
-          <td>${r.wallet||""}</td>
+          <td><a class="wallet-link" href="https://solscan.io/account/${addr}" target="_blank" rel="noopener">${addr}</a></td>
           <td>${fmt(r.solAmount,6)}</td>
           <td>${sig?`<a href="${link}" target="_blank" rel="noopener noreferrer">${sig.slice(0,10)}…</a>`:""}</td>
-          <td><span class="badge">realtime</span></td>`;
+          <td><span class="badge">realtime</span></td>
+          <td>
+            <button type="button" class="star-btn" data-wallet="${addr}" data-active="${savedMap[addr]?'true':'false'}" title="Save / Unsave">
+              <span class="star-icn">★</span> Save
+            </button>
+          </td>`;
         frag.appendChild(tr);
       });
+
       tbody.appendChild(frag);
+      updateStarIndicators();
     }
 
     /************* Refresh *************/
     async function refreshAll(){
-      // After refresh → Fetch highlights, Refresh loses highlight
       setRefreshEmphasis(false);
       setFetchEmphasis(true);
 
       clearPills();
       candles = buildCandles();
       renderCandles();
-      updateCustomBounds(); // update custom datetime min/max
+      updateCustomBounds();
 
       const token=tokenInput.value.trim();
       if(!token){ statusTop.textContent="Enter a token address."; statusTop.className="tiny err"; return; }
 
       statusTop.textContent="Resolving token…"; statusTop.className="tiny";
       try{
-        tokenNameEl.textContent = await resolveTokenName(token);
+        await resolveTokenMeta(token);
         statusTop.textContent="Ready — toggle 4h pills and/or set custom range, then Fetch.";
         statusTop.className="tiny ok";
       }catch{
-        tokenNameEl.textContent = token.slice(0,6)+"…"+token.slice(-6);
-        statusTop.textContent="Ready.";
-        statusTop.className="tiny ok";
+        setTokenLabel(token.slice(0,6)+"…"+token.slice(-6));
+        setTokenSymbol("");
+        statusTop.textContent="Ready."; statusTop.className="tiny ok";
       }
     }
 
-    // Fetch selected windows
+    // Fetch
     $("#fetchBtn").addEventListener("click", async ()=>{
-      // turn off Fetch highlight immediately on click
       setFetchEmphasis(false);
 
       const token=tokenInput.value.trim();
@@ -411,14 +711,6 @@
       customSince.value = ""; customTill.value = "";
     };
 
-    // Initial UI defaults
-    $("#token").value = DEFAULT_MINT;
-    (async()=>{ $("#tokenName").textContent = await resolveTokenName(DEFAULT_MINT); })();
-
-    // Initial emphasis: Refresh highlighted, Fetch neutral
-    setRefreshEmphasis(true);
-    setFetchEmphasis(false);
-
     // Typing a new token → Refresh highlights again; Fetch neutral
     tokenInput.addEventListener("input", ()=>{
       setRefreshEmphasis(true);
@@ -426,9 +718,13 @@
       statusTop.textContent="";
     });
 
-    candles = buildCandles();
-    renderCandles();
-    updateCustomBounds();
+    // Init
+    tokenInput.value = DEFAULT_MINT;
+    setTokenLabel("—"); setTokenSymbol("");
+    (async()=>{ await resolveTokenMeta(DEFAULT_MINT); })();
+    setRefreshEmphasis(true); setFetchEmphasis(false);
+    candles = buildCandles(); renderCandles(); updateCustomBounds();
+    renderSavedTable();
   </script>
 </body>
 </html>
