@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>CRYPTO STARSHIP — RESEARCH • Solana (Realtime • 4h Windows, 60h cap)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0b1118">
+
+  <!-- Favicons (place these files in your static root, e.g. /public) -->
+  <link rel="icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="/starship.css">
+</head>
+<body>
+
+  <!-- HERO BANNER (hi-res, responsive) -->
+  <picture class="hero">
+    <source type="image/webp"
+            srcset="/banner-4k-3840x640.webp 3840w,
+                    /banner-2560x420.webp    2560w,
+                    /banner-1920x320.webp    1920w,
+                    /banner-1500x280.webp    1500w"
+            sizes="(min-width:1200px) 1160px, 100vw">
+    <img
+      src="/banner-1920x320.png"
+      srcset="/banner-4k-3840x640.png 3840w,
+              /banner-2560x420.png    2560w,
+              /banner-1920x320.png    1920w,
+              /banner-1500x280.png    1500w"
+      sizes="(min-width:1200px) 1160px, 100vw"
+      alt="CRYPTO STARSHIP — RESEARCH">
+  </picture>
+
+  <div class="wrap">
+    <header>
+      <h1 class="caps">Crypto Starship — Solana (Realtime • 4h Windows, 60h cap)</h1>
+      <div class="muted">Click <b>Refresh</b> → toggle 4h pills → Fetch</div>
+    </header>
+
+    <section class="card">
+      <form id="query-form" onsubmit="return false;">
+        <div class="row">
+          <div style="min-width:460px;flex:1">
+            <label for="token">Token Mint Address
+              <span class="tiny">• Name: <b id="tokenName">—</b></span>
+            </label>
+            <input id="token" />
+          </div>
+          <div style="width:140px">
+            <label for="limit">Limit / window</label>
+            <input type="number" id="limit" min="1" max="1000" value="100" />
+          </div>
+          <div class="row" style="gap:8px">
+            <button type="button" id="refreshChart" class="btn btn-pulse">Refresh</button>
+            <button type="button" id="selectAll" class="btn">Select all</button>
+            <button type="button" id="clearAll"  class="btn">Clear</button>
+          </div>
+        </div>
+
+        <div class="muted" style="margin-top:10px">4h windows (newest first): click pills to toggle selection.</div>
+        <div id="candles" class="grid"></div>
+
+        <div class="row" style="margin-top:10px">
+          <div style="width:160px">
+            <label for="minSol">Min SOL</label>
+            <input type="number" id="minSol" step="0.0000001" placeholder="e.g. 0.1" />
+          </div>
+          <div style="width:160px">
+            <label for="maxSol">Max SOL</label>
+            <input type="number" id="maxSol" step="0.0000001" placeholder="e.g. 5" />
+          </div>
+          <div style="flex:1"></div>
+          <div>
+            <label>&nbsp;</label>
+            <button type="submit" id="fetchBtn" class="btn">Fetch</button>
+          </div>
+        </div>
+
+        <div id="statusTop" class="tiny">—</div>
+        <div id="status" class="status"></div>
+      </form>
+    </section>
+
+    <section class="card" style="margin-top:12px">
+      <div class="table-wrap">
+        <table id="results">
+          <thead>
+            <tr>
+              <th>Time (UTC)</th>
+              <th>Wallet</th>
+              <th>SOL Amount</th>
+              <th>Tx</th>
+              <th>Dataset</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    /************* constants *************/
+    const REALTIME_HOURS = 60;
+    const CANDLE_HOURS = 4;
+    const NUM_CANDLES = REALTIME_HOURS / CANDLE_HOURS;
+    const DEFAULT_MINT = "H8xQ6poBjB9DTPMDTKWzWPrnxu4bDEhybxiouF8Ppump";
+
+    const $ = s => document.querySelector(s);
+    const statusEl=$("#status"), statusTop=$("#statusTop"), tbody=$("#tbody"), candlesWrap=$("#candles");
+    const tokenInput=$("#token"), tokenNameEl=$("#tokenName"), refreshBtn=$("#refreshChart");
+
+    /************* utils *************/
+    const pad = n => String(n).padStart(2,"0");
+    const toLocalISO = d => `${d.getUTCFullYear()}-${pad(d.getUTCMonth()+1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}Z`;
+    const toInputISO = d => { const x=new Date(d); x.setUTCSeconds(0,0); return x.toISOString().replace(".000",""); };
+    const isoCell = ts => { const d=new Date(ts); return isNaN(d)?(ts||""):d.toISOString().replace("T"," ").replace("Z","Z"); };
+    const fmt = (n,d=6)=> (n==null||!isFinite(+n))?"":(+n).toLocaleString(undefined,{maximumFractionDigits:d});
+
+    /************* token name (best-effort) *************/
+    async function resolveTokenName(mint){
+      try{
+        const r = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${mint}`, {mode:"cors"});
+        if(r.ok){ const j=await r.json(); const pair=j?.pairs?.[0]; const base=pair?.baseToken; if(base?.name||base?.symbol) return base.name || base.symbol; }
+      }catch{}
+      try{
+        const r2 = await fetch(`https://public-api.solscan.io/token/meta?tokenAddress=${mint}`, {mode:"cors"});
+        if(r2.ok){ const j=await r2.json(); if(j?.name||j?.symbol) return j.name || j.symbol; }
+      }catch{}
+      return mint.slice(0,6)+"…"+mint.slice(-6);
+    }
+
+    /************* pills *************/
+    let candles = [];
+    function buildCandles(){
+      const now=new Date(); now.setUTCMinutes(0,0,0);
+      const out=[];
+      for(let i=0;i<NUM_CANDLES;i++){
+        const till=new Date(now.getTime()-i*CANDLE_HOURS*3600*1000);
+        const since=new Date(till.getTime()-CANDLE_HOURS*3600*1000);
+        out.push({since,till});
+      }
+      return out; // newest first
+    }
+    function renderCandles(){
+      candlesWrap.innerHTML="";
+      const frag=document.createDocumentFragment();
+      candles.forEach((c,idx)=>{
+        const div=document.createElement("div");
+        div.className="pill"; div.dataset.active="false"; div.dataset.idx=idx;
+        div.title = `${toLocalISO(c.since)} → ${toLocalISO(c.till)} (UTC)`;
+        div.textContent = `${toLocalISO(c.since).slice(5,16)} – ${toLocalISO(c.till).slice(5,16)}`;
+        div.onclick=()=>{ div.dataset.active = (div.dataset.active==="true")?"false":"true"; };
+        frag.appendChild(div);
+      });
+      candlesWrap.appendChild(frag);
+    }
+    function clearPills(){ candlesWrap.querySelectorAll(".pill").forEach(el=>el.dataset.active="false"); }
+    function allPills(){ candlesWrap.querySelectorAll(".pill").forEach(el=>el.dataset.active="true"); }
+    function selectedWindows(){
+      const idxs=[...candlesWrap.querySelectorAll(".pill[data-active='true']")].map(n=>+n.dataset.idx).sort((x,y)=>x-y);
+      return idxs.map(i=>({ since: toInputISO(candles[i].since), till: toInputISO(candles[i].till) }));
+    }
+
+    /************* API *************/
+    async function callAPI(body){
+      const res=await fetch("/api/trades",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+      if(!res.ok){
+        let msg=res.statusText;
+        try{
+          const t=await res.json(); msg=t?.details||t?.error||msg;
+          if(t?.bounds){ statusTop.textContent = `Error: ${msg} (Allowed: ${t.bounds.minSince} → ${t.bounds.maxTill})`; }
+        }catch{}
+        throw new Error(msg);
+      }
+      return res.json();
+    }
+
+    /************* table *************/
+    function renderTable(rows){
+      tbody.innerHTML="";
+      const frag=document.createDocumentFragment();
+      rows.forEach(r=>{
+        const sig=r.signature||"", link=sig?`https://solscan.io/tx/${sig}`:"";
+        const tr=document.createElement("tr");
+        tr.innerHTML=`
+          <td>${isoCell(r.time)}</td>
+          <td>${r.wallet||""}</td>
+          <td>${fmt(r.solAmount,6)}</td>
+          <td>${sig?`<a href="${link}" target="_blank" rel="noopener noreferrer">${sig.slice(0,10)}…</a>`:""}</td>
+          <td><span class="badge">realtime</span></td>`;
+        frag.appendChild(tr);
+      });
+      tbody.appendChild(frag);
+    }
+
+    /************* refresh emphasis *************/
+    function setRefreshEmphasis(on){
+      refreshBtn.classList.toggle("btn-pulse", !!on);
+      refreshBtn.classList.toggle("btn", true);
+      refreshBtn.classList.toggle("btn-ghost", !on);
+    }
+    tokenInput.addEventListener("input", ()=>{ setRefreshEmphasis(true); statusTop.textContent=""; });
+
+    /************* Refresh (rebuild windows + token name) *************/
+    async function refreshAll(){
+      clearPills();
+      candles = buildCandles();
+      renderCandles();
+
+      const token=tokenInput.value.trim();
+      if(!token){ statusTop.textContent="Enter a token mint."; statusTop.className="tiny err"; return; }
+
+      statusTop.textContent="Resolving token…"; statusTop.className="tiny";
+      try{
+        tokenNameEl.textContent = await resolveTokenName(token);
+        statusTop.textContent="Ready — toggle 4h pills then Fetch."; statusTop.className="tiny ok";
+        setRefreshEmphasis(false);
+      }catch{
+        tokenNameEl.textContent = token.slice(0,6)+"…"+token.slice(-6);
+        statusTop.textContent="Ready."; statusTop.className="tiny ok";
+        setRefreshEmphasis(false);
+      }
+    }
+
+    // Fetch selected windows
+    $("#fetchBtn").addEventListener("click", async ()=>{
+      const token=tokenInput.value.trim();
+      const limitPerWindow=parseInt($("#limit").value||"100",10);
+      const minSol=parseFloat($("#minSol").value), maxSol=parseFloat($("#maxSol").value);
+      const windows=selectedWindows();
+      if(!token){ statusEl.textContent="Enter a token mint."; statusEl.className="status err"; return; }
+      if(windows.length===0){ statusEl.textContent="Select at least one 4h window (toggle pills)."; statusEl.className="status err"; return; }
+
+      statusEl.textContent="Loading…"; statusEl.className="status";
+      try{
+        const { rows } = await callAPI({ token, windows, limitPerWindow });
+        const filtered = rows.filter(r=>{
+          const s=+r.solAmount; if(!isFinite(s)) return true;
+          if(!Number.isNaN(minSol) && s<minSol) return false;
+          if(!Number.isNaN(maxSol) && s>maxSol) return false;
+          return true;
+        });
+        renderTable(filtered);
+        statusEl.textContent=`Loaded ${filtered.length} row(s) from ${windows.length} interval(s).`;
+        statusEl.className="status ok";
+      }catch(err){
+        statusEl.textContent=`Error: ${err.message||err}`; statusEl.className="status err";
+      }
+    });
+
+    // Buttons
+    $("#refreshChart").onclick = ()=> refreshAll();
+    $("#selectAll").onclick = ()=> allPills();
+    $("#clearAll").onclick  = ()=> clearPills();
+
+    // Initial UI defaults
+    tokenInput.value = DEFAULT_MINT;
+    (async()=>{ tokenNameEl.textContent = await resolveTokenName(DEFAULT_MINT); })();
+
+    candles = buildCandles();
+    renderCandles();
+  </script>
+</body>
+</html>
