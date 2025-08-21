@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Starship • Solana (Realtime • 4h Windows, 60h cap)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root {
+      --bg:#0b1118; --panel:#0f1722; --panel2:#0c1522;
+      --muted:#9aa4b2; --text:#e8ebf2; --radius:16px;
+      --accent:#2ed573; --accent2:#16a34a; --stroke:rgba(255,255,255,.10);
+      --stroke-strong:rgba(255,255,255,.2);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;background:radial-gradient(1200px 600px at 20% -10%,rgba(60,120,255,.06),transparent 60%), var(--bg);
+      color:var(--text);font:14px/1.45 system-ui,Segoe UI,Inter,Roboto,sans-serif;
+    }
+    .wrap{max-width:1160px;margin:28px auto;padding:0 16px}
+    header{
+      display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
+      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));
+      border:1px solid var(--stroke); border-radius:18px; padding:10px 14px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 10px 35px rgba(0,0,0,.25);
+    }
+    h1{margin:0;font-size:18px;letter-spacing:.2px}
+    .muted{color:var(--muted)}
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.02));
+      border:1px solid var(--stroke); border-radius:var(--radius); padding:14px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 20px 60px rgba(0,0,0,.30);
+    }
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    input,button{
+      width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--stroke);
+      background:linear-gradient(180deg,#0e1623,#0b121c);color:var(--text);outline:none
+    }
+    .btn{cursor:pointer;background:linear-gradient(180deg,#202a3a,#151c27);border-color:var(--stroke-strong)}
+    .btn-ghost{background:linear-gradient(180deg,#101820,#0b1219)}
+    .btn-pulse{
+      background: linear-gradient(180deg,var(--accent),var(--accent2));
+      border-color: rgba(46,213,115,.7); color:#04110a; font-weight:700;
+      box-shadow: 0 0 0 0 rgba(46,213,115,.5); animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(46,213,115,.55); }
+      70%{ box-shadow: 0 0 0 14px rgba(46,213,115,0); }
+      100%{ box-shadow: 0 0 0 0 rgba(46,213,115,0); }
+    }
+
+    .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:10px}
+    .pill{
+      padding:8px 10px;border:1px solid rgba(255,255,255,.18);border-radius:999px;text-align:center;user-select:none;
+      background:linear-gradient(180deg,#101a27,#0b131e); box-shadow:inset 0 1px 0 rgba(255,255,255,.05)
+    }
+    .pill[data-active="true"]{background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.55)}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .status{min-height:20px;margin-top:8px}.ok{color:#22c55e}.err{color:#ff6b6b}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:10px 8px;border-bottom:1px dashed rgba(255,255,255,.06);text-align:left;vertical-align:top}
+    th{font-size:12px;color:var(--muted)}
+    .table-wrap{overflow:auto;max-height:70vh;border:1px solid var(--stroke);border-radius:12px}
+    a{color:#9dd6ff;text-decoration:none} a:hover{text-decoration:underline}
+    .badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.18);font-size:12px;background:rgba(34,197,94,.12)}
+    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0}
+    .chip{border:1px solid var(--stroke);border-radius:999px;padding:8px 12px;background:linear-gradient(180deg,#0b1624,#0a121c)}
+    .tiny{font-size:12px;color:var(--muted)}
+    .kbd{font:600 11px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; padding:2px 6px;border-radius:6px;border:1px solid var(--stroke); background:#0f1722;color:#e8ebf2}
+    @media (max-width:1160px){.grid{grid-template-columns:repeat(3,1fr)}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>🚀 Starship — Solana (Realtime • 4h Windows, 60h cap)</h1>
+      <div class="muted">Click <b>Refresh</b> → toggle 4h pills → Fetch</div>
+    </header>
+
+    <section class="card">
+      <form id="query-form" onsubmit="return false;">
+        <div class="row">
+          <div style="min-width:460px;flex:1">
+            <label for="token">Token Mint Address <span class="tiny">• Name: <b id="tokenName">—</b></span></label>
+            <input id="token" />
+          </div>
+          <div style="width:140px">
+            <label for="limit">Limit / window</label>
+            <input type="number" id="limit" min="1" max="1000" value="100" />
+          </div>
+          <div class="row" style="gap:8px">
+            <button type="button" id="refreshChart" class="btn btn-pulse">Refresh</button>
+            <button type="button" id="selectAll" class="btn">Select all</button>
+            <button type="button" id="clearAll"  class="btn">Clear</button>
+          </div>
+        </div>
+
+        <div class="muted" style="margin-top:10px">4h windows (newest first): click pills to toggle selection.</div>
+        <div id="candles" class="grid"></div>
+
+        <div class="row" style="margin-top:10px">
+          <div style="width:160px">
+            <label for="minSol">Min SOL</label>
+            <input type="number" id="minSol" step="0.0000001" placeholder="e.g. 0.1" />
+          </div>
+          <div style="width:160px">
+            <label for="maxSol">Max SOL</label>
+            <input type="number" id="maxSol" step="0.0000001" placeholder="e.g. 5" />
+          </div>
+          <div style="flex:1"></div>
+          <div>
+            <label>&nbsp;</label>
+            <button type="submit" id="fetchBtn" class="btn">Fetch</button>
+          </div>
+        </div>
+
+        <div id="statusTop" class="tiny">—</div>
+        <div id="status" class="status"></div>
+      </form>
+    </section>
+
+    <section class="card" style="margin-top:12px">
+      <div class="table-wrap">
+        <table id="results">
+          <thead>
+            <tr>
+              <th>Time (UTC)</th>
+              <th>Wallet</th>
+              <th>SOL Amount</th>
+              <th>Tx</th>
+              <th>Dataset</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    /************* constants *************/
+    const REALTIME_HOURS = 60;                 // ← changed from 68 to 60
+    const CANDLE_HOURS = 4;
+    const NUM_CANDLES = REALTIME_HOURS / CANDLE_HOURS; // 15 windows
+    const DEFAULT_MINT = "H8xQ6poBjB9DTPMDTKWzWPrnxu4bDEhybxiouF8Ppump";
+
+    const $ = s => document.querySelector(s);
+    const statusEl=$("#status"), statusTop=$("#statusTop"), tbody=$("#tbody"), candlesWrap=$("#candles");
+    const tokenInput=$("#token"), tokenNameEl=$("#tokenName"), refreshBtn=$("#refreshChart");
+
+    /************* utils *************/
+    const pad = n => String(n).padStart(2,"0");
+    const toLocalISO = d => `${d.getUTCFullYear()}-${pad(d.getUTCMonth()+1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}Z`;
+    const toInputISO = d => { const x=new Date(d); x.setUTCSeconds(0,0); return x.toISOString().replace(".000",""); };
+    const isoCell = ts => { const d=new Date(ts); return isNaN(d)?(ts||""):d.toISOString().replace("T"," ").replace("Z","Z"); };
+    const fmt = (n,d=6)=> (n==null||!isFinite(+n))?"":(+n).toLocaleString(undefined,{maximumFractionDigits:d});
+
+    /************* token name (best-effort) *************/
+    async function resolveTokenName(mint){
+      try{
+        const r = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${mint}`, {mode:"cors"});
+        if(r.ok){ const j=await r.json(); const pair=j?.pairs?.[0]; const base=pair?.baseToken; if(base?.name||base?.symbol) return base.name || base.symbol; }
+      }catch{}
+      try{
+        const r2 = await fetch(`https://public-api.solscan.io/token/meta?tokenAddress=${mint}`, {mode:"cors"});
+        if(r2.ok){ const j=await r2.json(); if(j?.name||j?.symbol) return j.name || j.symbol; }
+      }catch{}
+      return mint.slice(0,6)+"…"+mint.slice(-6);
+    }
+
+    /************* pills *************/
+    let candles = [];
+    function buildCandles(){
+      const now=new Date(); now.setUTCMinutes(0,0,0);
+      const out=[];
+      for(let i=0;i<NUM_CANDLES;i++){
+        const till=new Date(now.getTime()-i*CANDLE_HOURS*3600*1000);
+        const since=new Date(till.getTime()-CANDLE_HOURS*3600*1000);
+        out.push({since,till});
+      }
+      return out; // newest first
+    }
+    function renderCandles(){
+      candlesWrap.innerHTML="";
+      const frag=document.createDocumentFragment();
+      candles.forEach((c,idx)=>{
+        const div=document.createElement("div");
+        div.className="pill"; div.dataset.active="false"; div.dataset.idx=idx;
+        div.title = `${toLocalISO(c.since)} → ${toLocalISO(c.till)} (UTC)`;
+        div.textContent = `${toLocalISO(c.since).slice(5,16)} – ${toLocalISO(c.till).slice(5,16)}`;
+        div.onclick=()=>{ div.dataset.active = (div.dataset.active==="true")?"false":"true"; };
+        frag.appendChild(div);
+      });
+      candlesWrap.appendChild(frag);
+    }
+    function clearPills(){ candlesWrap.querySelectorAll(".pill").forEach(el=>el.dataset.active="false"); }
+    function allPills(){ candlesWrap.querySelectorAll(".pill").forEach(el=>el.dataset.active="true"); }
+    function setPillsRangeActive(a,b){
+      const [s,e]=[Math.min(a,b),Math.max(a,b)];
+      candlesWrap.querySelectorAll(".pill").forEach((el,i)=>{ if(i>=s&&i<=e) el.dataset.active="true"; });
+    }
+    function selectedWindows(){
+      const idxs=[...candlesWrap.querySelectorAll(".pill[data-active='true']")].map(n=>+n.dataset.idx).sort((x,y)=>x-y);
+      return idxs.map(i=>({ since: toInputISO(candles[i].since), till: toInputISO(candles[i].till) }));
+    }
+
+    /************* API *************/
+    async function callAPI(body){
+      const res=await fetch("/api/trades",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+      if(!res.ok){
+        let msg=res.statusText;
+        try{
+          const t=await res.json(); msg=t?.details||t?.error||msg;
+          if(t?.bounds){ statusTop.textContent = `Error: ${msg} (Allowed: ${t.bounds.minSince} → ${t.bounds.maxTill})`; }
+        }catch{}
+        throw new Error(msg);
+      }
+      return res.json();
+    }
+
+    /************* table *************/
+    function renderTable(rows){
+      tbody.innerHTML="";
+      const frag=document.createDocumentFragment();
+      rows.forEach(r=>{
+        const sig=r.signature||"", link=sig?`https://solscan.io/tx/${sig}`:"";
+        const tr=document.createElement("tr");
+        tr.innerHTML=`
+          <td>${isoCell(r.time)}</td>
+          <td>${r.wallet||""}</td>
+          <td>${fmt(r.solAmount,6)}</td>
+          <td>${sig?`<a href="${link}" target="_blank" rel="noopener noreferrer">${sig.slice(0,10)}…</a>`:""}</td>
+          <td><span class="badge">realtime</span></td>`;
+        frag.appendChild(tr);
+      });
+      tbody.appendChild(frag);
+    }
+
+    /************* refresh emphasis *************/
+    function setRefreshEmphasis(on){
+      refreshBtn.classList.toggle("btn-pulse", !!on);
+      refreshBtn.classList.toggle("btn", true);
+      refreshBtn.classList.toggle("btn-ghost", !on);
+    }
+    tokenInput.addEventListener("input", ()=>{ setRefreshEmphasis(true); statusTop.textContent=""; });
+
+    /************* Refresh (rebuild windows + token name) *************/
+    async function refreshAll(){
+      clearPills();
+      candles = buildCandles();
+      renderCandles();
+
+      const token=tokenInput.value.trim();
+      if(!token){ statusTop.textContent="Enter a token mint."; statusTop.className="tiny err"; return; }
+
+      statusTop.textContent="Resolving token…"; statusTop.className="tiny";
+      try{
+        tokenNameEl.textContent = await resolveTokenName(token);
+        statusTop.textContent="Ready — toggle 4h pills then Fetch."; statusTop.className="tiny ok";
+        setRefreshEmphasis(false);
+      }catch{
+        tokenNameEl.textContent = token.slice(0,6)+"…"+token.slice(-6);
+        statusTop.textContent="Ready."; statusTop.className="tiny ok";
+        setRefreshEmphasis(false);
+      }
+    }
+
+    // Fetch selected windows
+    $("#fetchBtn").addEventListener("click", async ()=>{
+      const token=tokenInput.value.trim();
+      const limitPerWindow=parseInt($("#limit").value||"100",10);
+      const minSol=parseFloat($("#minSol").value), maxSol=parseFloat($("#maxSol").value);
+      const windows=selectedWindows();
+      if(!token){ statusEl.textContent="Enter a token mint."; statusEl.className="status err"; return; }
+      if(windows.length===0){ statusEl.textContent="Select at least one 4h window (toggle pills)."; statusEl.className="status err"; return; }
+
+      statusEl.textContent="Loading…"; statusEl.className="status";
+      try{
+        const { rows } = await callAPI({ token, windows, limitPerWindow });
+        const filtered = rows.filter(r=>{
+          const s=+r.solAmount; if(!isFinite(s)) return true;
+          if(!Number.isNaN(minSol) && s<minSol) return false;
+          if(!Number.isNaN(maxSol) && s>maxSol) return false;
+          return true;
+        });
+        renderTable(filtered);
+        statusEl.textContent=`Loaded ${filtered.length} row(s) from ${windows.length} interval(s).`;
+        statusEl.className="status ok";
+      }catch(err){
+        statusEl.textContent=`Error: ${err.message||err}`; statusEl.className="status err";
+      }
+    });
+
+    // Buttons
+    $("#refreshChart").onclick = ()=> refreshAll();
+    $("#selectAll").onclick = ()=> allPills();
+    $("#clearAll").onclick  = ()=> clearPills();
+
+    // Initial UI defaults
+    tokenInput.value = DEFAULT_MINT;
+    (async()=>{ tokenNameEl.textContent = await resolveTokenName(DEFAULT_MINT); })();
+
+    candles = buildCandles();
+    renderCandles();
+  </script>
+</body>
+</html>
